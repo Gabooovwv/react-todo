@@ -3,3 +3,31 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.contentContainer {
+  padding: 20px;
+  margin: 10px;
+  background-color: #528CE0;
+}
+
+.contentText {
+  padding: 10px;
+  margin: 10px;
+  color: #fff;
+}
+button {
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  margin: 5px;
+  padding: 10px;
+}
+button.button-primary {
+  background-color: #000088;
+}
+button.button-danger {
+  background-color: #C21F39;
+}
+button.button-success {
+  background-color: #008800;
+}
