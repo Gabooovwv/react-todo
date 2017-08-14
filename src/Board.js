@@ -1,47 +1,77 @@
 import React from 'react';
 import Comment from './Comment';
+import Cookies from 'universal-cookie';
 
-class Board extends React.Component {
+const cookies = new Cookies();
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      comment: [
-        'almafa',
-        'kortefa',
-        'liliom'
-      ], classes: []
-    };
-  }
 
-  removeComment(i)
-  {
-    console.log(this.state.classes, i);
-    /*var arr = this.state.comment;
-    arr.slice(i, 1);
-    this.setState({comment: arr});*/
-  }
+class Board extends React.Component
+{
+  state = {
+    comment: (typeof cookies.get('comment') !== 'undefined' ? cookies.get('comment') : []),
+    menu: ['All', 'Active', 'Complete'],
+    filter: 'All'
+  };
 
-  updateComment(newText, i)
-  {
+  save = (e) => {
+    if (e.key === 'Enter') {
+      var arr = this.state.comment;
+      arr.push({text: e.target.value, status: 'Active'});
+      e.target.value = '';
+      cookies.set('comment', arr, { path: '/' });
+      this.setState({comment: arr});
+    }
+  };
+
+  removeComment = (i) => {
     var arr = this.state.comment;
-    arr[i] = newText;
+    arr.splice(i, 1);
+    cookies.set('comment', arr, { path: '/' });
     this.setState({comment: arr});
-  }
+  };
 
-  render() {
-    console.log(this.state.classes);
+  updateComment = (newText, i) => {
+    var arr = this.state.comment;
+    arr[i] = {text: newText, status: arr[i].status};
+    cookies.set('comment', arr, { path: '/' });
+    this.setState({comment: arr});
+  };
+
+  doneComment = (i, status) => {
+    var arr = this.state.comment;
+    arr[i] = {text: arr[i].text, status: status};
+    cookies.set('comment', arr, { path: '/' });
+    this.setState({comment: arr});
+  };
+
+  filter = (e) => {
+    this.setState({filter: e.target.innerText});
+  };
+
+  render = () => {
+      console.log(cookies.get('comment'))
     return (
         <div className="board">
-          {
-              this.state.comment.map((item, i) => {
+          <input onKeyPress={this.save} /><br />
+          <ul>
+              {this.state.menu.map((item, i) => {return (
+                  <li key={i} className={this.state.filter === item ? 'active' : ''} onClick={this.filter}>{item}</li>
+              )})}
+          </ul>
+            {this.state.comment.map((item, i) => {
                 return (
-                    <Comment key={i} index={i} updateCommentText={this.updateComment} deleteFromBoard={this.removeComment}>
-                      {item}
+                    <Comment
+                        key={i}
+                        index={i}
+                        filter={this.state.filter === 'All' || this.state.filter === item.status ? 'show' : 'hidden'}
+                        updateCommentText={this.updateComment}
+                        deleteFromBoard={this.removeComment}
+                        doneComment={this.doneComment}
+                        commentStatus={item.status}>
+                        {item.text}
                     </Comment>
                 )
-              })
-          }
+            })}
         </div>
     );
   }
