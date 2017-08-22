@@ -1,5 +1,6 @@
 import React from 'react';
 import Comment from './Comment';
+import Counter from './Counter';
 import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
@@ -9,8 +10,8 @@ class Board extends React.Component
 {
   state = {
     comment: (typeof cookies.get('comment') !== 'undefined' ? cookies.get('comment') : []),
-    menu: ['All', 'Active', 'Complete'],
-    filter: 'All'
+    menu:    ['All', 'Active', 'Complete'],
+    filter:  'All'
   };
 
   save = (e) => {
@@ -49,10 +50,10 @@ class Board extends React.Component
   };
 
   render = () => {
-      console.log(cookies.get('comment'))
     return (
         <div className="board">
           <input onKeyPress={this.save} /><br />
+          <Counter count={this.state.comment} />
           <ul>
               {this.state.menu.map((item, i) => {return (
                   <li key={i} className={this.state.filter === item ? 'active' : ''} onClick={this.filter}>{item}</li>
